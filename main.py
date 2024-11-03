@@ -47,11 +47,13 @@ def handle_callback(callback):
                     file.write(f"{p[0]} {int(p[1])+int(callback.data)}\n")
                 else:
                     file.write(f"{p[0]} {p[1]}\n")
+        bot.edit_message_text(text = "Оценка поставлена",chat_id= callback.message.chat.id,message_id=callback.message.id)
         with open("te.txt", "a") as file:
-            file.write(f"\n{callback.user.id}")
+            file.write(f"\n{callback.message.from_user.id}")
         sas = 0
     elif sas == 0:
-        bot.send_message(callback.message.chat.id, 'Выбери курс: ', reply_markup=keyboard_0)
+        bot.edit_message_text(text = "Выбери курс:",chat_id= callback.message.chat.id,message_id=callback.message.id)
+        bot.edit_message_reply_markup(reply_markup=keyboard_0 ,chat_id= callback.message.chat.id,message_id=callback.message.id)
         sas+=1
     elif callback.data == "Рейтинг преподавателей":
         sp = utils.top_prepod()
@@ -64,27 +66,25 @@ def handle_callback(callback):
             gh = list(f)
         for i in range(len(gh)):
             gh[i] = gh[i][:-1]
-        if str(callback.user.id) in gh:
-            bot.send_message(callback.message.chat.id, 'Ты уже отправлял оценку')
+        if str(callback.message.from_user.id) in gh:
+            bot.edit_message_text(text = "Ты уже отправлял оценку",chat_id= callback.message.chat.id,message_id=callback.message.id)
             sas=0
         else:
-            bot.send_message(callback.message.chat.id, 'Выбери оценку', reply_markup=keyboard_1)
+            bot.edit_message_text(text = "Выбери оценку",chat_id= callback.message.chat.id,message_id=callback.message.id)
+            bot.edit_message_reply_markup(reply_markup=keyboard_1 ,chat_id= callback.message.chat.id,message_id=callback.message.id)
             g = int(callback.data)-2
             sas+=1
     elif sas ==1:
         a = int(callback.data)-2
-        sp_2 = ["Назад","Илья","Кирилл", "Маша ","Настя","Данил"]
+        sp_2 = ["Илья","Кирилл", "Маша ","Настя","Данил"]
         keyboard_3 = telebot.types.InlineKeyboardMarkup()
-        b = telebot.types.InlineKeyboardButton(sp_2[0], callback_data="exit")
+        b = telebot.types.InlineKeyboardButton("Назад", callback_data="exit")
         keyboard_3.add(b)
-        if a!=4:
-            s = 0
-            for i in range(1+a,len(sp_2)):
-                s+=1
-                b = telebot.types.InlineKeyboardButton(sp_2[i], callback_data=str(i+2))
-                keyboard_3.add(b)
-                if s == 2:
-                    break
+        s = 0
+        while s!=2:
+            s+=1
+            b = telebot.types.InlineKeyboardButton(sp_2[(a+s)%len(sp_2)], callback_data=str((a+s)%len(sp_2)+2))
+            keyboard_3.add(b)
         bot.edit_message_text(text = "Выбери преподователя:",chat_id= callback.message.chat.id,message_id=callback.message.id)
         bot.edit_message_reply_markup(reply_markup=keyboard_3 ,chat_id= callback.message.chat.id,message_id=callback.message.id)
         sas+=1
