@@ -48,7 +48,7 @@ def handle_callback(callback):
                 else:
                     file.write(f"{p[0]} {p[1]}\n")
         with open("te.txt", "a") as file:
-            file.write(f"\n{callback.message.chat.id}")
+            file.write(f"\n{callback.user.id}")
         sas = 0
     elif sas == 0:
         bot.send_message(callback.message.chat.id, 'Выбери курс: ', reply_markup=keyboard_0)
@@ -64,7 +64,7 @@ def handle_callback(callback):
             gh = list(f)
         for i in range(len(gh)):
             gh[i] = gh[i][:-1]
-        if str(callback.message.chat.id) in gh:
+        if str(callback.user.id) in gh:
             bot.send_message(callback.message.chat.id, 'Ты уже отправлял оценку')
             sas=0
         else:
